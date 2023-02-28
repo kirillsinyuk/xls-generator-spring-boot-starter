@@ -8,20 +8,19 @@ import java.math.BigInteger
 
 class NumberCellProcessor<ENTITY>(
     name: String,
-    format: String? = "#,###.00",
+    format: String? = "####",
     extractor: (ENTITY) -> BigInteger
 ) : AbstractCellProcessor<BigInteger, ENTITY>(name, format, extractor) {
 
     private val CONTEXT_KEY = "number_cell_processor"
 
     override fun acceptExtracted(value: BigInteger, cell: Cell, context: Context) {
-        cell.cellStyle = context.get(CONTEXT_KEY, CellStyle::class.java, cellStyleFactory())
+        cell.cellStyle = context.get(CONTEXT_KEY, CellStyle::class, cellStyleFactory())
         cell.setCellValue(value.toDouble())
     }
 
-    private fun cellStyleFactory(): (Workbook) -> CellStyle =
-        { workbook ->
-            workbook.createCellStyle()
-                .apply { dataFormat = workbook.createDataFormat().getFormat(format) }
-        }
+    private fun cellStyleFactory(): (Workbook) -> CellStyle = { workbook ->
+        workbook.createCellStyle()
+            .apply { dataFormat = workbook.createDataFormat().getFormat(format) }
+    }
 }

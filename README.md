@@ -14,5 +14,12 @@ interface XlsGeneratorService {
 }
 ```
 
+After you get a builder, add data with dumpRow method
+```kotlin
+fun dumpRow(entity: T)
+```
+and build a result.<br/>
+You can find an example in XlsGeneratorSpringBootStarterTests class
+
 
 

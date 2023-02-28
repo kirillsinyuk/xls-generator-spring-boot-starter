@@ -15,13 +15,12 @@ class LocalDateCellProcessor<ENTITY>(
     private val CONTEXT_KEY = "date_cell_processor"
 
     override fun acceptExtracted(value: LocalDate, cell: Cell, context: Context) {
-        cell.cellStyle = context.get(CONTEXT_KEY, CellStyle::class.java, cellStyleFactory())
+        cell.cellStyle = context.get(CONTEXT_KEY, CellStyle::class, cellStyleFactory())
         cell.setCellValue(value)
     }
 
-    private fun cellStyleFactory(): (Workbook) -> CellStyle =
-        { workbook ->
-            workbook.createCellStyle()
-                .apply { dataFormat = workbook.createDataFormat().getFormat(format) }
-        }
+    private fun cellStyleFactory(): (Workbook) -> CellStyle = { workbook ->
+        workbook.createCellStyle()
+            .apply { dataFormat = workbook.createDataFormat().getFormat(format) }
+    }
 }
