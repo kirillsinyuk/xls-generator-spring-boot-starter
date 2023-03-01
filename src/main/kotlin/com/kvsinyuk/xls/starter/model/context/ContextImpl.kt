@@ -1,31 +1,32 @@
 package com.kvsinyuk.xls.starter.model.context
 
+import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.streaming.SXSSFSheet
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import kotlin.reflect.KClass
 
 class ContextImpl(
-    private val workbook: Workbook
+    private val workbook: SXSSFWorkbook
 ): Context {
 
+    private val sheet: SXSSFSheet = workbook.createSheet()
     private val context: ConcurrentMap<String, Any> = ConcurrentHashMap()
 
-    override fun <T : Any> get(key: String, target: KClass<out T>, createFunction: (Workbook) -> T): T {
-        val value = createFunction.invoke(workbook)
-
-        if(!target.isInstance(value)) {
-            throw IllegalArgumentException("Value of key $key is not an instance of type ${target.simpleName}")
-        }
-        return context.getOrDefault(key, value) as T
+    init {
+        sheet.trackAllColumnsForAutoSizing()
     }
 
-    override fun <T: Any> get(key: String, target: KClass<out T>): T {
-        val value = context[key]
+    override fun getWorkbook(): SXSSFWorkbook = workbook
 
-        if(!target.isInstance(value)) {
-            throw IllegalArgumentException("Value of key $key is not an instance of type ${target.simpleName}")
-        }
-        return value as T
-    }
+    override fun getCurrentSheet(): Sheet = sheet
+
+    override fun <T : Any> get(key: String, createFunction: (Workbook) -> T) =
+        context.computeIfAbsent(key) {
+            createFunction.invoke(workbook)
+        } as T
+
+    override fun <T: Any> get(key: String) =
+        context[key] as T
 }

@@ -3,7 +3,7 @@ package com.kvsinyuk.xls.starter.model.processors
 import com.kvsinyuk.xls.starter.model.context.Context
 import org.apache.poi.ss.usermodel.Cell
 
-class StringCellProcessor<ENTITY>(
+open class StringCellProcessor<ENTITY>(
     name: String,
     format: String? = null,
     extractor: (ENTITY) -> String
