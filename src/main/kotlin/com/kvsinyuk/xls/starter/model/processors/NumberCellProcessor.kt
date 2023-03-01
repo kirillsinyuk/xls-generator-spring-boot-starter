@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.Workbook
 import java.math.BigInteger
 
-class NumberCellProcessor<ENTITY>(
+open class NumberCellProcessor<ENTITY>(
     name: String,
     format: String? = "####",
     extractor: (ENTITY) -> BigInteger
@@ -15,11 +15,11 @@ class NumberCellProcessor<ENTITY>(
     private val CONTEXT_KEY = "number_cell_processor"
 
     override fun acceptExtracted(value: BigInteger, cell: Cell, context: Context) {
-        cell.cellStyle = context.get(CONTEXT_KEY, CellStyle::class, cellStyleFactory())
+        cell.cellStyle = context.get(CONTEXT_KEY, cellStyle())
         cell.setCellValue(value.toDouble())
     }
 
-    private fun cellStyleFactory(): (Workbook) -> CellStyle = { workbook ->
+    override fun cellStyle(): (Workbook) -> CellStyle = { workbook ->
         workbook.createCellStyle()
             .apply { dataFormat = workbook.createDataFormat().getFormat(format) }
     }

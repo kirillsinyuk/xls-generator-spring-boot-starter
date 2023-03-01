@@ -28,17 +28,19 @@ class XlsGeneratorSpringBootStarterTests {
             NumberCellProcessor("NumberName", extractor = TestEntity::dummyNumber),
             StringCellProcessor("StringName", extractor = TestEntity::dummyString)
         )
-        val builder = xlsGeneratorService.newXlsBuilder(File.createTempFile("File", ".xls"), processors)
+        val xlsBuilder = xlsGeneratorService.newXlsBuilder(File.createTempFile("File", ".xls"), processors)
 
         // when
-        (1..countOfEntities)
-            .map { TestEntity() }
-            .forEach { builder.dumpRow(it) }
-        val result = builder.build()
+        val result = xlsBuilder.use { builder ->
+            (1..countOfEntities)
+                .map { TestEntity() }
+                .forEach { builder.dumpRow(it) }
+            builder.build()
+        }
 
         // then
-        val resultXls = XSSFWorkbook(result.inputStream())
-        assertEquals(countOfEntities, resultXls.getSheetAt(0).lastRowNum)
+        XSSFWorkbook(result.inputStream())
+            .use { assertEquals(countOfEntities, it.getSheetAt(0).lastRowNum) }
     }
 
 }
