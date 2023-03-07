@@ -29,13 +29,13 @@ class XlsGeneratorSpringBootStarterTests {
             StringCellProcessor("StringName", extractor = TestEntity::dummyString)
         )
         val xlsBuilder = xlsGeneratorService.newXlsBuilder(File.createTempFile("File", ".xls"), processors)
+        val testData = (1..countOfEntities)
+            .map { TestEntity() }
 
         // when
-        val result = xlsBuilder.use { builder ->
-            (1..countOfEntities)
-                .map { TestEntity() }
-                .forEach { builder.dumpRow(it) }
-            builder.build()
+        val result = xlsBuilder.use {
+            it.dumpAllRows(testData)
+            .build()
         }
 
         // then

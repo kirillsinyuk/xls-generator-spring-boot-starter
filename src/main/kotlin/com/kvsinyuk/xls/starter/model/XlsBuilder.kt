@@ -31,6 +31,12 @@ class XlsBuilder<T>(
         }
     }
 
+    fun dumpAllRows(entities: Iterable<T>): XlsBuilder<T> {
+        entities
+            .forEach { dumpRow(it) }
+        return this
+    }
+
     fun skipRows(num: Int): XlsBuilder<T> {
         rowNumber.addAndGet(num)
         return this
