@@ -9,6 +9,8 @@ interface Context {
     fun getWorkbook(): SXSSFWorkbook
     fun getCurrentSheet(): Sheet
 
+    fun clearContext()
+
     fun <T : Any> get(key: String, createFunction: (Workbook) -> T): T
 
     fun <T: Any> get(key: String): T

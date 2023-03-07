@@ -11,7 +11,7 @@ class ContextImpl(
     private val workbook: SXSSFWorkbook
 ): Context {
 
-    private val sheet: SXSSFSheet = workbook.createSheet()
+    private var sheet: SXSSFSheet = workbook.createSheet()
     private val context: ConcurrentMap<String, Any> = ConcurrentHashMap()
 
     init {
@@ -21,6 +21,10 @@ class ContextImpl(
     override fun getWorkbook(): SXSSFWorkbook = workbook
 
     override fun getCurrentSheet(): Sheet = sheet
+
+    override fun clearContext() {
+        context.clear()
+    }
 
     override fun <T : Any> get(key: String, createFunction: (Workbook) -> T) =
         context.computeIfAbsent(key) {
