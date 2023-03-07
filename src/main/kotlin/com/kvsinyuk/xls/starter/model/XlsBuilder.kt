@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class XlsBuilder<T>(
     private val file: File,
-    private val processors: List<CellProcessor<T>>
+    private var processors: List<CellProcessor<T>>
 ) : Closeable {
 
     private val context: Context
@@ -29,6 +29,23 @@ class XlsBuilder<T>(
             val cell = row.createCell(processorNum)
             processors[processorNum].accept(entity, cell, context)
         }
+    }
+
+    fun dumpAllRows(entities: Iterable<T>): XlsBuilder<T> {
+        entities
+            .forEach { dumpRow(it) }
+        return this
+    }
+
+    fun skipRows(num: Int): XlsBuilder<T> {
+        rowNumber.addAndGet(num)
+        return this
+    }
+
+    fun secondaryTable(processors: List<CellProcessor<T>>): XlsBuilder<T> {
+        return this
+            .apply { this.processors = processors }
+            .also { context.clearContext() }
     }
 
     fun build(): File {
