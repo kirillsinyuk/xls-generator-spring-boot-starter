@@ -2,6 +2,7 @@ package com.kvsinyuk.xls.starter.model
 
 import com.kvsinyuk.xls.starter.model.context.Context
 import com.kvsinyuk.xls.starter.model.context.ContextImpl
+import org.apache.poi.xssf.streaming.SXSSFSheet
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import java.io.Closeable
 import java.io.File
@@ -9,21 +10,25 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class XlsBuilder<T>(
     private val file: File,
-    private var processors: List<CellProcessor<T>>
+    private var processors: List<CellProcessor<T>>,
+    sheetName: String? = null
 ) : Closeable {
 
     private val context: Context
-
+    private val workbook: SXSSFWorkbook
+    private var sheet: SXSSFSheet
 
     private var rowNumber: AtomicInteger = AtomicInteger(1)
 
     init {
-        context = ContextImpl(createWorkbook())
+        workbook = createWorkbook()
+        sheet = createNewSheet(sheetName)
+        context = ContextImpl(workbook)
         dumpSheetHead()
     }
 
     fun dumpRow(entity: T) {
-        val row = context.getCurrentSheet().createRow(rowNumber.getAndIncrement())
+        val row = sheet.createRow(rowNumber.getAndIncrement())
 
         for (processorNum in processors.indices) {
             val cell = row.createCell(processorNum)
@@ -32,8 +37,7 @@ class XlsBuilder<T>(
     }
 
     fun dumpAllRows(entities: Iterable<T>): XlsBuilder<T> {
-        entities
-            .forEach { dumpRow(it) }
+        entities.forEach { dumpRow(it) }
         return this
     }
 
@@ -48,9 +52,18 @@ class XlsBuilder<T>(
             .also { context.clearContext() }
     }
 
+    fun createNewSheet(processors: List<CellProcessor<T>>, sheetName: String? = null): XlsBuilder<T> {
+        rowNumber = AtomicInteger(1)
+        this.processors = processors
+        context.clearContext()
+        sheet = createNewSheet(sheetName)
+        dumpSheetHead()
+        return this
+    }
+
     fun build(): File {
         file.outputStream()
-            .use { context.getWorkbook().write(it) }
+            .use { workbook.write(it) }
         return file
     }
 
@@ -58,12 +71,12 @@ class XlsBuilder<T>(
         SXSSFWorkbook(rowAccessWindowSize)
 
     private fun dumpSheetHead() {
-        val font = context.getWorkbook().createFont()
+        val font = workbook.createFont()
             .apply { bold = true }
-        val style = context.getWorkbook().createCellStyle()
+        val style = workbook.createCellStyle()
             .also { it.setFont(font) }
 
-        val row = context.getCurrentSheet().createRow(0)
+        val row = sheet.createRow(0)
         for (processorNum in processors.indices) {
             row.createCell(processorNum)
                 .also { it.setCellValue(processors[processorNum].name()) }
@@ -71,8 +84,16 @@ class XlsBuilder<T>(
         }
     }
 
+    private fun createNewSheet(sheetName: String?): SXSSFSheet {
+        val sheet = sheetName
+            ?.let { workbook.createSheet(sheetName) }
+            ?: workbook.createSheet()
+        sheet.trackAllColumnsForAutoSizing()
+        return sheet
+    }
+
     override fun close() {
-        context.getWorkbook().dispose()
-        context.getWorkbook().close()
+        workbook.dispose()
+        workbook.close()
     }
 }
