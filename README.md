@@ -32,7 +32,7 @@ and set another table on the same sheet
 fun secondaryTable(processors: List<CellProcessor<T>>): XlsBuilder<T>
 ```
 
-At the end just call `.build()` to get the result.<br/>
+At the end just call `.build()` to get the result file.<br/>
 
 <b>P.S. Do not forget to free builder resources.</b><br/>
 You can find an example in XlsGeneratorSpringBootStarterTests class

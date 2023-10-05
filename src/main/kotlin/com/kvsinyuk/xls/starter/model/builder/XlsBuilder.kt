@@ -1,4 +1,4 @@
-package com.kvsinyuk.xls.starter.model
+package com.kvsinyuk.xls.starter.model.builder
 
 import java.io.Closeable
 import java.io.File

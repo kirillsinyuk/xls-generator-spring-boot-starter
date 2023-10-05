@@ -1,5 +1,7 @@
-package com.kvsinyuk.xls.starter.model
+package com.kvsinyuk.xls.starter.model.builder
 
+import com.kvsinyuk.xls.starter.model.CellProcessor
+import com.kvsinyuk.xls.starter.model.TableType
 import com.kvsinyuk.xls.starter.model.context.Context
 import com.kvsinyuk.xls.starter.model.context.ContextImpl
 import com.kvsinyuk.xls.starter.model.TableType.ROW_BASED
