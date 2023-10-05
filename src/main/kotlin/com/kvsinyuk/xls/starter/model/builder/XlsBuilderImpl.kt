@@ -1,66 +1,63 @@
-package com.kvsinyuk.xls.starter.model
+package com.kvsinyuk.xls.starter.model.builder
 
+import com.kvsinyuk.xls.starter.model.CellProcessor
+import com.kvsinyuk.xls.starter.model.TableType
 import com.kvsinyuk.xls.starter.model.context.Context
 import com.kvsinyuk.xls.starter.model.context.ContextImpl
 import com.kvsinyuk.xls.starter.model.TableType.ROW_BASED
 import com.kvsinyuk.xls.starter.model.TableType.COLUMN_BASED
 import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.xssf.streaming.SXSSFSheet
+import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
-import java.io.Closeable
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
-class XlsBuilder<T>(
+class XlsBuilderImpl<T>(
     private val file: File,
     private var processors: List<CellProcessor<T>>,
     private var tableType: TableType,
+    private val workbook: Workbook = SXSSFWorkbook(),
     sheetName: String? = null
-) : Closeable {
+) : XlsBuilder<T> {
 
     private val context: Context
-    private val workbook: SXSSFWorkbook
-    private var sheet: SXSSFSheet
+
+    private var sheet: Sheet
 
     private var rowNumber: AtomicInteger = AtomicInteger(1)
     private var columnNumber: AtomicInteger = AtomicInteger(1)
 
     init {
-        workbook = createWorkbook()
         sheet = createNewSheet(sheetName)
         context = ContextImpl(workbook)
         dumpSheetHead()
     }
 
-    fun dump(entity: T) {
+    override fun dump(entity: T): XlsBuilderImpl<T> {
         when (tableType) {
             ROW_BASED -> dumpRow(entity)
             COLUMN_BASED -> dumpColumn(entity)
         }
+        return this
     }
 
-    fun dumpAll(entities: Iterable<T>): XlsBuilder<T> {
+    override fun dumpAll(entities: Iterable<T>): XlsBuilderImpl<T> {
         entities.forEach { dump(it) }
         return this
     }
 
-    fun skipRows(num: Int): XlsBuilder<T> {
+    override fun skipRows(num: Int): XlsBuilderImpl<T> {
         rowNumber.addAndGet(num)
         return this
     }
 
-    fun skipColumns(num: Int): XlsBuilder<T> {
+    override fun skipColumns(num: Int): XlsBuilderImpl<T> {
         columnNumber.addAndGet(num)
         return this
     }
 
-    fun secondaryTable(processors: List<CellProcessor<T>>): XlsBuilder<T> {
-        return this
-            .apply { this.processors = processors }
-            .also { context.clearContext() }
-    }
-
-    fun createNewSheet(processors: List<CellProcessor<T>>, sheetName: String? = null): XlsBuilder<T> {
+    override fun createNewSheet(processors: List<CellProcessor<T>>, sheetName: String?): XlsBuilderImpl<T> {
         rowNumber = AtomicInteger(1)
         columnNumber = AtomicInteger(1)
         this.processors = processors
@@ -70,14 +67,17 @@ class XlsBuilder<T>(
         return this
     }
 
-    fun build(): File {
+    override fun secondaryTable(processors: List<CellProcessor<T>>): XlsBuilderImpl<T> {
+        return this
+            .apply { this.processors = processors }
+            .also { context.clearContext() }
+    }
+
+    override fun build(): File {
         file.outputStream()
             .use { workbook.write(it) }
         return file
     }
-
-    private fun createWorkbook(rowAccessWindowSize: Int = 50) =
-        SXSSFWorkbook(rowAccessWindowSize)
 
     private fun dumpSheetHead() {
         val font = workbook.createFont()
@@ -126,16 +126,16 @@ class XlsBuilder<T>(
         columnNumber.incrementAndGet()
     }
 
-    private fun createNewSheet(sheetName: String?): SXSSFSheet {
-        val sheet = sheetName
+    private fun createNewSheet(sheetName: String?): Sheet {
+        return sheetName
             ?.let { workbook.createSheet(sheetName) }
             ?: workbook.createSheet()
-        sheet.trackAllColumnsForAutoSizing()
-        return sheet
     }
 
     override fun close() {
-        workbook.dispose()
+        if (workbook is SXSSFWorkbook) {
+            workbook.dispose()
+        }
         workbook.close()
     }
 }
