@@ -1,12 +1,11 @@
 package com.kvsinyuk.xls.starter.model.context
 
 import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 class ContextImpl(
-    private val workbook: SXSSFWorkbook
+    private val workbook: Workbook
 ): Context {
 
     private val context: ConcurrentMap<String, Any> = ConcurrentHashMap()

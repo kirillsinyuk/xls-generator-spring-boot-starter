@@ -6,6 +6,5 @@ import org.apache.poi.ss.usermodel.Cell
 interface CellProcessor<T> {
 
     fun name(): String
-
     fun accept(entity: T, cell: Cell, context: Context)
 }
