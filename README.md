@@ -10,7 +10,8 @@ interface XlsGeneratorService {
     fun <T> newXlsBuilder(
         file: File,
         cellProcessors: List<CellProcessor<T>>,
-        type: TableType // Table type: ROW_BASED/COLUMN_BASED
+        type: TableType, // Table type: ROW_BASED/COLUMN_BASED
+        workbook: Workbook // SXSS by deafult
     ): XlsBuilder<T>
 }
 ```
