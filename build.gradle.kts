@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.kvsinyuk"
-version = "0.0.1-SNAPSHOT"
+version = "1.1.1"
 
 repositories {
     mavenCentral()
@@ -33,9 +33,21 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.getByName<Jar>("bootJar").enabled = false
+
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/OWNER/REPOSITORY")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
     publications {
-        create<MavenPublication>("xls-generator-spring-boot-starter") {
+        register<MavenPublication>("gpr") {
             from(components["java"])
         }
     }
