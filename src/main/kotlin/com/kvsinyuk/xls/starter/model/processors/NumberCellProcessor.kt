@@ -9,7 +9,7 @@ import java.math.BigInteger
 open class NumberCellProcessor<ENTITY>(
     name: String,
     format: String? = "####",
-    extractor: (ENTITY) -> BigInteger
+    extractor: (ENTITY) -> BigInteger,
 ) : AbstractCellProcessor<BigInteger, ENTITY>(name, format, extractor) {
 
     private val CONTEXT_KEY = "number_cell_processor"

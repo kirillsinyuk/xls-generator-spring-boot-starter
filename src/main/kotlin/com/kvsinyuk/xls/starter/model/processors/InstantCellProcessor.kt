@@ -11,7 +11,7 @@ import java.time.ZoneId
 open class InstantCellProcessor<ENTITY>(
     name: String,
     format: String? = "dd/mm/yyyy hh:mm",
-    extractor: (ENTITY) -> Instant
+    extractor: (ENTITY) -> Instant,
 ) : AbstractCellProcessor<Instant, ENTITY>(name, format, extractor) {
 
     private val CONTEXT_KEY = "instant_cell_processor"

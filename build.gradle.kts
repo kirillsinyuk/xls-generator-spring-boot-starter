@@ -2,6 +2,7 @@ plugins {
     `maven-publish`
     id("org.springframework.boot") version "3.0.3"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.jmailen.kotlinter") version "3.10.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
 }
