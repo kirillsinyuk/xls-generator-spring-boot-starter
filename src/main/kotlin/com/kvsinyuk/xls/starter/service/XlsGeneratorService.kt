@@ -12,6 +12,6 @@ interface XlsGeneratorService {
         file: File,
         cellProcessors: List<CellProcessor<T>>,
         type: TableType = TableType.ROW_BASED,
-        workbook: Workbook = SXSSFWorkbook()
+        workbook: Workbook = SXSSFWorkbook(),
     ): XlsBuilder<T>
 }

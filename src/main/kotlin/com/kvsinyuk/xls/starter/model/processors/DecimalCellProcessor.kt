@@ -9,7 +9,7 @@ import java.math.BigDecimal
 open class DecimalCellProcessor<ENTITY>(
     name: String,
     format: String? = "#,###.00",
-    extractor: (ENTITY) -> BigDecimal
+    extractor: (ENTITY) -> BigDecimal,
 ) : AbstractCellProcessor<BigDecimal, ENTITY>(name, format, extractor) {
 
     private val CONTEXT_KEY = "decimal_cell_processor"

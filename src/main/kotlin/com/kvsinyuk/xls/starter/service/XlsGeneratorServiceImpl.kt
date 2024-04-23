@@ -6,11 +6,11 @@ import com.kvsinyuk.xls.starter.model.builder.XlsBuilderImpl
 import org.apache.poi.ss.usermodel.Workbook
 import java.io.File
 
-class XlsGeneratorServiceImpl: XlsGeneratorService {
+class XlsGeneratorServiceImpl : XlsGeneratorService {
     override fun <T> newXlsBuilder(
         file: File,
         cellProcessors: List<CellProcessor<T>>,
         type: TableType,
-        workbook: Workbook
+        workbook: Workbook,
     ) = XlsBuilderImpl(file, cellProcessors, type, workbook)
 }

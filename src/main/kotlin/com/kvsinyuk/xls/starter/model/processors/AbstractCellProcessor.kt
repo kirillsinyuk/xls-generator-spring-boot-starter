@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook
 abstract class AbstractCellProcessor<T, ENTITY>(
     val name: String,
     val format: String? = null,
-    val extractor: (ENTITY) -> T
+    val extractor: (ENTITY) -> T,
 ) : CellProcessor<ENTITY> {
 
     abstract fun acceptExtracted(value: T, cell: Cell, context: Context)

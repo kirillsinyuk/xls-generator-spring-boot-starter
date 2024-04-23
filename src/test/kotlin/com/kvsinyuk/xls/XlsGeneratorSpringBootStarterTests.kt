@@ -30,7 +30,7 @@ class XlsGeneratorSpringBootStarterTests {
         val processors = listOf<CellProcessor<TestEntity>>(
             NumberCellProcessor("NumberName", extractor = TestEntity::dummyNumber),
             StringCellProcessor("StringName", extractor = TestEntity::dummyString),
-            InstantCellProcessor("InstantName", extractor = TestEntity::dummyInstant)
+            InstantCellProcessor("InstantName", extractor = TestEntity::dummyInstant),
         )
         val xlsBuilder = xlsGeneratorService.newXlsBuilder(File.createTempFile("File", ".xls"), processors)
         val testData = (1..countOfEntities)
@@ -39,7 +39,7 @@ class XlsGeneratorSpringBootStarterTests {
         // when
         val result = xlsBuilder.use {
             it.dumpAll(testData)
-            .build()
+                .build()
         }
 
         // then
@@ -55,12 +55,12 @@ class XlsGeneratorSpringBootStarterTests {
             NumberCellProcessor("NumberName", extractor = TestEntity::dummyNumber),
             StringCellProcessor("StringName", extractor = TestEntity::dummyString),
             InstantCellProcessor("InstantName", extractor = TestEntity::dummyInstant),
-            LocalDateCellProcessor("LocalDateName", extractor = TestEntity::dummyLocalDate)
+            LocalDateCellProcessor("LocalDateName", extractor = TestEntity::dummyLocalDate),
         )
         val xlsBuilder = xlsGeneratorService.newXlsBuilder(
             File.createTempFile("File", ".xls"),
             processors,
-            type = TableType.COLUMN_BASED
+            type = TableType.COLUMN_BASED,
         )
         val testData = (1..countOfEntities)
             .map { TestEntity() }
@@ -78,5 +78,4 @@ class XlsGeneratorSpringBootStarterTests {
                 assertEquals(countOfEntities + 1, it.getSheetAt(0).getRow(0).lastCellNum.toInt())
             }
     }
-
 }

@@ -2,10 +2,10 @@ package com.kvsinyuk.xls.starter.model.builder
 
 import com.kvsinyuk.xls.starter.model.CellProcessor
 import com.kvsinyuk.xls.starter.model.TableType
+import com.kvsinyuk.xls.starter.model.TableType.COLUMN_BASED
+import com.kvsinyuk.xls.starter.model.TableType.ROW_BASED
 import com.kvsinyuk.xls.starter.model.context.Context
 import com.kvsinyuk.xls.starter.model.context.ContextImpl
-import com.kvsinyuk.xls.starter.model.TableType.ROW_BASED
-import com.kvsinyuk.xls.starter.model.TableType.COLUMN_BASED
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
@@ -18,7 +18,7 @@ class XlsBuilderImpl<T>(
     private var processors: List<CellProcessor<T>>,
     private var tableType: TableType,
     private val workbook: Workbook = SXSSFWorkbook(),
-    sheetName: String? = null
+    sheetName: String? = null,
 ) : XlsBuilder<T> {
 
     private val context: Context

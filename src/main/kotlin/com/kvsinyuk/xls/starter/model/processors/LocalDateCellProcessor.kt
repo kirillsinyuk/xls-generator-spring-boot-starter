@@ -9,7 +9,7 @@ import java.time.LocalDate
 open class LocalDateCellProcessor<ENTITY>(
     name: String,
     format: String? = "dd/mm/yyyy",
-    extractor: (ENTITY) -> LocalDate
+    extractor: (ENTITY) -> LocalDate,
 ) : AbstractCellProcessor<LocalDate, ENTITY>(name, format, extractor) {
 
     private val CONTEXT_KEY = "date_cell_processor"
